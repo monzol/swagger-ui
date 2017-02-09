@@ -1,0 +1,359 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "Juno product search and product info API",
+        "version": "2",
+        "title": "Juno Records API",
+        "contact": {
+            "email": "zoltan.monori@juno.co.uk"
+        }
+    },
+    "tags": [
+        {
+            "name": "Filter",
+            "description": "Product filters - each resource lists all the available filter"
+        },
+        {
+            "name": "Product",
+            "description": "Product or Product list"
+        }
+    ],
+    "paths": {
+        "/genres": {
+            "get": {
+                "tags": [
+                    "Filter"
+                ],
+                "summary": "Genres",
+                "operationId": "genres",
+                "description": "Returns an array of genre objects.<br /><br />Use the id as a 'genre_id' parameter in a GET /products request to filter a product list by genre.",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of genre objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/genre"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/release-periods": {
+            "get": {
+                "tags": [
+                    "Filter"
+                ],
+                "summary": "Release periods",
+                "operationId": "releasePeriods",
+                "description": "Returns an array of releasePeriod objects.<br /><br />Use the id as a 'release_period_id' parameter in a GET /products request to filter a product list by release period.",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of releasePeriod objects",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/releasePeriod"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/products": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get a product list",
+                "operationId": "productList",
+                "description": "Returns a list of vinyl or CD products filtered by parameters",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "genre",
+                        "description": "Filter results by specific genre.",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "period",
+                        "description": "filter results by specific time period",
+                        "required": false,
+                        "type": "string",
+                        "enum": [
+                            "this-week",
+                            "today",
+                            "two-weeks",
+                            "four-weeks",
+                            "eight-weeks",
+                            "back-cat"
+                        ]
+                    },
+                    {
+                        "in": "query",
+                        "name": "class",
+                        "description": "filter results by specific time period",
+                        "required": false,
+                        "type": "string"
+                    },
+                    {
+                        "in": "query",
+                        "name": "show_out_of_stock",
+                        "description": "If set to true, the results will include items that are out of stock",
+                        "required": false,
+                        "type": "boolean"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "List of products filtered by the passed parameters",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/productPhysical"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input parameter"
+                    }
+                }
+            }
+        },
+        "/products/{id}": {
+            "get": {
+                "tags": [
+                    "Product"
+                ],
+                "summary": "Get a product",
+                "operationId": "product",
+                "description": "Returns a product identified by id",
+                "produces": [
+                    "application/json",
+                    "application/xml"
+                ],
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "id",
+                        "description": "id consisting of titleId and productId joined by '-' dash.",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Product entity",
+                        "schema": {
+                            "$ref": "#/definitions/productPhysical"
+                        }
+                    },
+                    "400": {
+                        "description": "invalid input parameter"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "genre": {
+            "description": "Representation of a genre object",
+            "type": "object",
+            "required": [
+                "id",
+                "subId",
+                "shortName",
+                "longName",
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "1508"
+                },
+                "shortName": {
+                    "type": "string",
+                    "example": "Electro House"
+                },
+                "longName": {
+                    "type": "string",
+                    "example": "Electro house/Electroclash"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "electro-house"
+                },
+                "keywords": {
+                    "type": "string",
+                    "example": "new wave house newwave house electroclash electro clash"
+                }
+            }
+        },
+        "releasePeriod": {
+            "description": "Representation of a preset release period",
+            "type": "object",
+            "required": [
+                "name",
+                "url"
+            ],
+            "properties": {
+                "id": {
+                    "type": "integer",
+                    "example": 2
+                },
+                "name": {
+                    "type": "string",
+                    "example": "This Week"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "this-week"
+                }
+            }
+        },
+        "productPhysical": {
+            "description": "Representation of a vinyl, CD or equipment product",
+            "type": "object",
+            "required": [
+                "titleId",
+                "productId",
+                "price",
+                "images",
+                "productUrl",
+                "title",
+                "label",
+                "isEquipment"
+            ],
+            "properties": {
+                "titleId": {
+                    "type": "string",
+                    "example": "598829"
+                },
+                "productId": {
+                    "type": "string",
+                    "example": "01"
+                },
+                "price": {
+                    "type": "string",
+                    "example": "£10.75"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/productImage"
+                    }
+                },
+                "productUrl": {
+                    "type": "string",
+                    "example": "http://www.juno.co.uk/products/motor-city-selectors-001-motor-city-drum/598829-01/"
+                },
+                "isEquipment": {
+                    "type": "boolean",
+                    "example": false
+                },
+                "artist": {
+                    "type": "string",
+                    "example": "Motor City Drum Ensemble/Various"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Selectors 001&#58; Motor City Drum Ensemble"
+                },
+                "label": {
+                    "type": "string",
+                    "example": "Dekmantel Holland"
+                },
+                "format": {
+                    "type": "string",
+                    "example": "unmixed CD"
+                },
+                "cat": {
+                    "type": "string",
+                    "example": "DKMNTLSLCTRS 001CD"
+                },
+                "date": {
+                    "type": "string",
+                    "example": "30 Jan 2017"
+                },
+                "genre": {
+                    "type": "string",
+                    "example": "Deep House"
+                },
+                "tracklist": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/track"
+                    }
+                },
+                "review": {
+                    "type": "string",
+                    "example": "The fact that the vinyl edition of Motor City Drum Ensemble's Selektors compilation - the first in Dekmantel's crate-digging series - sold out in record time tells you all you need to know about this superb set. Packed with obscure, hard-to-find gems, it does a fantastic job in showcasing the depth, quality and variety of Danilo Plessow's record collection. Check, for example, the breezy soulfulness of DJ Slym Fas's 1997 gem \"Luv Music\", Risque III's early Chicago deep house killer \"Essence Of A Dream\", and the ludicrously expensive (if Discogs is to be believed) jazz-funk-goes-disco boogie brilliance of Licky's 1979 obscurity \"African Rock\". If you dig disco, deep house and boogie, you need this in your life."
+                },
+                "playedBy": {
+                    "type": "string",
+                    "example": "JKriv (Razor-N-Tape), Ear Trumpet, 25 Places"
+                },
+                "description": {
+                    "type": "string",
+                    "example": "<p itemprop=\"reviewBody\">This second generation of 'HS' nearfield reference monitors, like their predecessors, share the same design philosophy as the legendary NS-10M studio monitors - Providing accurate signal reproduction and superior sonic performance.<br><br>The Yamaha HS7 employ a new, highly efficient tweeter providing an extended high frequency range up to 30KHz. The matching HS8S 150W powered subwoofer provides an extend bass when a well defined bottom end is required.<br><br>A low resonance enclosure built using a three way mitre joint technique ensures that the corners of the speaker are firmly anchored leading to dramatically improved durability and the elimination of unwanted resonances that can colour the original sound. Yamaha's 'Vortex Sound Control' technology is deployed to decrease unwanted airflows around the speaker ports. This in turn reduces audible noise by up to 6dB.<br><br>Product video: http://www.youtube.com/watch?feature=player_embedded&amp;v=Dvj3StP4fVE</p>"
+                },
+                "video": {
+                    "type": "boolean",
+                    "example": true
+                }
+            }
+        },
+        "productImage": {
+            "type": "object",
+            "required": [
+                "url"
+            ],
+            "properties": {
+                "url": {
+                    "type": "string",
+                    "example": "http://images.junostatic.com/full/CS598829-01A-BIG.jpg"
+                },
+                "alt": {
+                    "type": "string"
+                }
+            }
+        },
+        "track": {
+            "type": "object",
+            "required": [
+                "artist",
+                "title"
+            ],
+            "properties": {
+                "artist": {
+                    "type": "string",
+                    "example": "House Of Jazz"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Hold Your Head Up"
+                }
+            }
+        }
+    },
+    "host": "www.zoltan.juno.co.uk",
+    "basePath": "/api/v2",
+    "schemes": [
+        "http"
+    ]
+}

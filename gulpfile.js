@@ -23,12 +23,14 @@ var banner = ['/**',
   ' */',
   ''].join('\n');
 
+var distPath = '/var/www/www.juno.co.uk/htdocs/api-docs';
+
 /**
  * Clean ups ./dist folder
  */
 gulp.task('clean', function() {
   return gulp
-    .src('./dist', {read: false})
+    .src(distPath, {read: false})
     .pipe(clean({force: true}))
     .on('error', log);
 });
@@ -64,12 +66,12 @@ gulp.task('dist', ['clean'], function() {
     .pipe(concat('swagger-ui.js'))
     .pipe(wrap('(function(){<%= contents %>}).call(this);'))
     .pipe(header(banner, { pkg: pkg } ))
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest(distPath))
     .pipe(uglify())
     .on('error', log)
     .pipe(rename({extname: '.min.js'}))
     .on('error', log)
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest(distPath))
     .pipe(connect.reload());
 });
 
@@ -99,13 +101,13 @@ gulp.task('copy', ['less'], function() {
   // copy JavaScript files inside lib folder
   gulp
     .src(['./lib/**/*.{js,map}'])
-    .pipe(gulp.dest('./dist/lib'))
+    .pipe(gulp.dest(distPath+'/lib'))
     .on('error', log);
 
   // copy all files inside html folder
   gulp
     .src(['./src/main/html/**/*'])
-    .pipe(gulp.dest('./dist'))
+    .pipe(gulp.dest(distPath))
     .on('error', log);
 });
 

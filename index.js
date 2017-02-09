@@ -3,5 +3,6 @@ var path = require('path');
 
 module.exports = {
     version: pack.version,
-    dist: path.resolve(__dirname, 'dist')
+    //dist: path.resolve(__dirname, 'dist')
+    dist: '/var/www/www.juno.co.uk/htdocs/api-docs'
 };
